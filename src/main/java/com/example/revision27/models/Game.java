@@ -36,6 +36,8 @@ public class Game {
         if (doc == null) {
             return null;
         }
+
+        game.set_id(doc.getObjectId("_id"));
         game.setGId(doc.getInteger("gid"));
         game.setName(doc.getString("name"));
         game.setYear(doc.getInteger("year"));

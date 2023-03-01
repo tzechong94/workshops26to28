@@ -3,10 +3,12 @@ package com.example.revision27.repo;
 import java.util.List;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
@@ -36,6 +38,13 @@ public class GameRepo {
         Query query = new Query()
                     .with(Sort.by(Direction.ASC, FIELD_RANKING))
                     .limit(limit).skip(offset);
+        return template.find(query, Document.class, COLLECTION_GAMES);
+    }
+
+    public List<Document> findGameBy_Id(String gameId) {
+        ObjectId id = new ObjectId(gameId);
+        Criteria criteria = Criteria.where("_id").is(id);
+        Query query = Query.query(criteria);
         return template.find(query, Document.class, COLLECTION_GAMES);
     }
 

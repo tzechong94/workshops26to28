@@ -6,8 +6,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -63,7 +65,6 @@ public class GameController {
         } else {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
-
     }
 
     @GetMapping("/games/rank")
@@ -105,7 +106,43 @@ public class GameController {
         } else {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
-
-
     }
+
+    @GetMapping("/game/{gameId}")
+    public ResponseEntity<?> findGameBy_Id(@PathVariable String gameId) {
+        try {
+        Date date = new Date();
+        Timestamp timestamp = new Timestamp(date.getTime());
+
+        List<Game> games = gameSvc.findGameBy_Id(gameId);
+        Game game = games.get(0);
+
+        JsonObject result = Json.createObjectBuilder()
+                                .add("game_id", game.get_id().toString())
+                                .add("name", game.getName())
+                                .add("year", game.getYear())
+                                .add("ranking", game.getRanking())
+                                .add("users_rated", game.getUsersRated())
+                                .add("url", game.getUrl())
+                                .add("timestamp", timestamp.toString())
+                                .build();
+
+        System.out.println(result + "result");
+
+        
+            if (result.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            } else {
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                            .status(HttpStatus.OK)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(e);
+
+        }
+    }
+
 }
