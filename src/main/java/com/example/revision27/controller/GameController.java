@@ -65,4 +65,47 @@ public class GameController {
         }
 
     }
+
+    @GetMapping("/games/rank")
+    public ResponseEntity<JsonObject> findGamesByRank(@RequestParam(defaultValue = "25") Integer limit, 
+    @RequestParam(defaultValue = "0") Integer offset) {
+
+        Date date = new Date();
+        Timestamp timestamp = new Timestamp(date.getTime());
+
+        List<Game> gameList = gameSvc.findGamesByRank(limit, offset);
+
+        System.out.println("gameList" + gameList);
+
+        JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
+        List<JsonObject> listOfGames = gameList
+                    .stream()
+                    .map(g -> g.toJsonObject())
+                    .toList();
+        
+        for (JsonObject x : listOfGames) {
+            arrBuilder.add(x);
+        }
+
+        System.out.println("arr" + arrBuilder);
+
+
+        JsonObject result = Json.createObjectBuilder()
+                        .add("games", arrBuilder)
+                        .add("offset", offset)
+                        .add("limit", limit)
+                        .add("total", gameSvc.count())
+                        .add("timestamp", timestamp.toString())
+                        .build();
+        
+        System.out.println("arr" + result);
+
+        if (result.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+
+
+    }
 }

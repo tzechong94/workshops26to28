@@ -24,5 +24,12 @@ public class GameService {
     public Integer count() {
         return gameRepo.count();
     }
+
+    public List<Game> findGamesByRank(Integer limit, Integer offset) {
+        return gameRepo.findAllGames(limit,offset)
+                    .stream()
+                    .map(g -> Game.create(g))
+                    .toList();
+    }
     
 }
