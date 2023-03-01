@@ -1,5 +1,6 @@
 package com.example.revision27.repo;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.bson.Document;
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import com.example.revision27.models.Game;
 
 import static com.example.revision27.Constants.*;
 
@@ -44,6 +46,12 @@ public class GameRepo {
     public List<Document> findGameBy_Id(String gameId) {
         ObjectId id = new ObjectId(gameId);
         Criteria criteria = Criteria.where("_id").is(id);
+        Query query = Query.query(criteria);
+        return template.find(query, Document.class, COLLECTION_GAMES);
+    }
+
+    public List<Document> getGameNameFromId(Integer gameId) {
+        Criteria criteria = Criteria.where("gid").is(gameId);
         Query query = Query.query(criteria);
         return template.find(query, Document.class, COLLECTION_GAMES);
     }

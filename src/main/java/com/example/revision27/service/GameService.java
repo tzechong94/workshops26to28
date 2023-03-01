@@ -38,5 +38,24 @@ public class GameService {
                         .map(g -> Game.create(g))
                         .toList();
     }
+
+    public List<Game> findGameByGameId(String gameId) {
+        return gameRepo.findGameBy_Id(gameId)
+                        .stream()
+                        .map(g -> Game.create(g))
+                        .toList();
+    }
+
+    public String getGameNameFromId(Integer gameId) {
+        List<Game> gameList =  gameRepo.getGameNameFromId(gameId)
+                        .stream()
+                        .map(g -> Game.create(g))
+                        .toList();
+        Game game = gameList.get(0);
+        String gameName = game.getName();
+        return gameName;
+    }
+
+
     
 }
