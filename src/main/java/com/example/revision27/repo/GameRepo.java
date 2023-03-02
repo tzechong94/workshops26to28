@@ -1,6 +1,5 @@
 package com.example.revision27.repo;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.bson.Document;
@@ -13,7 +12,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import com.example.revision27.models.Game;
 
 import static com.example.revision27.Constants.*;
 

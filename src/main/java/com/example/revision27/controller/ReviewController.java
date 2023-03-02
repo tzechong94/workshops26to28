@@ -1,6 +1,13 @@
 package com.example.revision27.controller;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -13,14 +20,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.example.revision27.models.NewReview;
 import com.example.revision27.models.Review;
 import com.example.revision27.repo.GameRepo;
 import com.example.revision27.service.GameService;
 import com.example.revision27.service.ReviewService;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 
 @Controller
@@ -45,12 +55,36 @@ public class ReviewController {
     @PostMapping("/review")
     public ResponseEntity<JsonObject> postReview(@RequestBody MultiValueMap<String, String> form) {
 
+        Date date = new Date();
+        Timestamp timestamp = new Timestamp(date.getTime());
         Review review = Review.createFromForm(form);
+        NewReview nr = new NewReview();
+
+        nr.setComment(review.getComment());
+        nr.setRating(review.getRating());
+        nr.setPosted(review.getPosted());
+
+        List<NewReview> newReviewList = new ArrayList<>();
+        newReviewList.add(nr);
 
         Integer gameId = review.getGameId();
 
         String gameName = gameSvc.getGameNameFromId(gameId);
+        
+        // JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
+        // List<NewReview> listOfReview = gameList
+        //             .stream()
+        //             .map(g -> g.toJsonObject())
+        //             .toList();
+        
+        // for (JsonObject x : listOfGames) {
+        //     arrBuilder.add(x);
+        // }
+
         review.setName(gameName);
+        review.setPosted(timestamp);
+        review.setEdited(newReviewList);
+        
 
         System.out.println(review.getName() + "name");
         System.out.println(review.getUser() + "user");
@@ -59,6 +93,7 @@ public class ReviewController {
         System.out.println(review.getPosted() + "posted");
         System.out.println(review.getRating() + "rating");
 
+        // JsonArrayBuilder arrbld = 
 
         JsonObject result = Json.createObjectBuilder()
                         .add("user", review.getName())
@@ -67,10 +102,31 @@ public class ReviewController {
                         .add("ID", review.getGameId())
                         .add("posted", review.getPosted().toString())
                         .add("name", gameName)
+                        // .add("edited", review.getEdited().toArray());
                         .build();
 
         reviewSvc.insertReview(review.toDocumentA());
 
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping("/review/{reviewId}")
+    public ResponseEntity<String> updateReviewIfExists(@PathVariable String reviewId, @RequestBody String newReviewJson) throws IOException {
+        // ObjectId _id = new ObjectId(reviewId);
+
+        NewReview nr = NewReview.createFromJson(newReviewJson);
+
+        Review returnedReview = reviewSvc.findReviewById(reviewId);
+
+        
+        if (returnedReview != null){
+            // List<NewReview> currentEditedHistory = returnedReview.getEdited();
+            // currentEditedHistory.add(nr);
+            reviewSvc.updateReviewById(reviewId, nr);
+            return new ResponseEntity<>(HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

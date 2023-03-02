@@ -2,6 +2,7 @@ package com.example.revision27.models;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -23,6 +24,7 @@ public class Review {
     private Integer gameId;
     private Date posted;
     private String name;
+    private List<NewReview> edited;
 
     public static Review createFromForm(MultiValueMap<String, String> form) {
         Review r = new Review();
@@ -44,11 +46,14 @@ public class Review {
         doc.put("rating", getRating());
         doc.put("gid", getGameId());
         doc.put("name", getName());
+        doc.put("posted", getPosted());
+        doc.put("edited", getEdited());
         return doc;
     }
 
     public Review createFromDoc(Document d) {
         Review r = new Review();
+        r.set_id(d.getObjectId("_id"));
         r.setUser(d.getString("user"));
         r.setRating(d.getInteger("rating"));
         r.setComment(d.getString("comment"));
@@ -57,6 +62,19 @@ public class Review {
         r.setName(d.getString("name"));
 
         return r;
+    }
+
+    public Document toDocumentUpdate() {
+        Document doc = new Document();
+        doc.put("user", getUser());
+        doc.put("comment", getComment());
+        doc.put("rating", getRating());
+        doc.put("gid", getGameId());
+        doc.put("name", getName());
+        doc.put("posted", getPosted());
+        doc.put("edited", getEdited());
+
+        return doc;
     }
 }
 
