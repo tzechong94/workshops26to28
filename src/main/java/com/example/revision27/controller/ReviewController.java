@@ -93,7 +93,7 @@ public class ReviewController {
                         .add("user", review.getName())
                         .add("rating", review.getRating())
                         .add("comment", review.getComment())
-                        .add("ID", review.getGameId())
+                        .add("ID", review.getGid())
                         .add("posted", review.getPosted().toString())
                         .add("name", gameName)
                         // .add("edited", review.getEdited().toArray());
@@ -157,6 +157,7 @@ public class ReviewController {
         System.out.println(listOfEdited + "history");
 
         JsonArrayBuilder arrbld = Json.createArrayBuilder();
+        
         List<JsonObject> listOfNewReviews = listOfEdited
                                         .stream()
                                         .map(r -> r.toJsonObject())

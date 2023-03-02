@@ -15,6 +15,9 @@ import com.mongodb.client.result.UpdateResult;
 
 import static com.example.revision27.Constants.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Repository
 public class ReviewRepo {
@@ -56,6 +59,19 @@ public class ReviewRepo {
         return template.findById(_id, Review.class, COLLECTION_REVIEWS);
         // mongotemplate automatically maps the results to the review class. if the name doesn't match,
         // you can also manually configure mapping i m
+    }
+
+    public List<String> getReviewIdByGid(String gameId) {
+        Criteria criteria = Criteria.where("gid").is(Integer.parseInt(gameId));
+        Query query = Query.query(criteria);
+        List<Review> result = template.find(query, Review.class, COLLECTION_GAMES);
+        List<String> reviewIdList = new ArrayList<String>();
+
+        for (Review x : result) {
+            reviewIdList.add("/review/" + x.get_id().toString());
+        }
+        System.out.println(reviewIdList);
+        return reviewIdList;
     }
     
 }

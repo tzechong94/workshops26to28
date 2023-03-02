@@ -40,11 +40,12 @@ public class GameService {
     }
 
     public List<Game> findGameByGameId(String gameId) {
-        return gameRepo.findGameBy_Id(gameId)
+        return gameRepo.findGameByGameId(gameId)
                         .stream()
                         .map(g -> Game.create(g))
                         .toList();
     }
+
 
     public String getGameNameFromId(Integer gameId) {
         List<Game> gameList =  gameRepo.getGameNameFromId(gameId)

@@ -2,6 +2,8 @@ package com.example.revision27.service;
 
 
 
+import java.util.List;
+
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,11 @@ public class ReviewService {
         // System.out.println(listOfEdited + "list of edited");
         return r;
     }
+
+    public List<String> getReviewIdByGid(String gameId) {
+        return reviewRepo.getReviewIdByGid(gameId);
+    }
+
 
     
 }

@@ -1,6 +1,7 @@
 package com.example.revision27.controller;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.revision27.models.Game;
 import com.example.revision27.service.GameService;
+import com.example.revision27.service.ReviewService;
+import com.google.gson.Gson;
 
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
@@ -25,6 +28,9 @@ public class GameController {
     
     @Autowired
     private GameService gameSvc;
+
+    @Autowired
+    private ReviewService reviewSvc;
 
     @GetMapping("/games")
     public ResponseEntity<JsonObject> findAllGames(@RequestParam(defaultValue = "25") Integer limit, 
@@ -130,11 +136,11 @@ public class GameController {
         System.out.println(result + "result");
 
         
-            if (result.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(result, HttpStatus.OK);
-            }
+        if (result.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
         } catch(Exception e) {
             e.printStackTrace();
             return ResponseEntity
@@ -144,6 +150,48 @@ public class GameController {
 
         }
     }
+
+    @GetMapping("/game/{gameId}/reviews")
+    public ResponseEntity<String> findGameAndReviews(@PathVariable String gameId){
+        Game game = gameSvc.findGameByGameId(gameId).get(0);
+        
+        List<String> reviewList = reviewSvc.getReviewIdByGid(gameId);
+        Date date = new Date();
+        Timestamp timestamp = new Timestamp(date.getTime());
+
+        JsonArrayBuilder arrbld = Json.createArrayBuilder();
+
+        for (String value: reviewList) {
+            arrbld.add(value).toString();
+        }  
+
+
+
+        JsonObject result = Json.createObjectBuilder()
+                                .add("game_id", game.getGid().toString())
+                                .add("name", game.getName())
+                                .add("year", game.getYear())
+                                .add("ranking", game.getRanking())
+                                .add("users_rated", game.getUsersRated())
+                                .add("url", game.getUrl())
+                                .add("reviews", arrbld)
+                                .add("timestamp", timestamp.toString())
+                                .build();
+
+        if (result.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(result.toString(), HttpStatus.OK);
+        } 
+    }
+
+    @GetMapping("/games/{highorlow}")
+    public ResponseEntity<String> findGamesByRating(@PathVariable String highorlow) {
+
+        return null;
+        // find all from comments collection, sort by rating. return json object game id, name, user, rating, review id 
+    }
+
 
 
 }

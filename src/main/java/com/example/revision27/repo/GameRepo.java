@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-
 import static com.example.revision27.Constants.*;
 
 
@@ -51,6 +50,13 @@ public class GameRepo {
     public List<Document> getGameNameFromId(Integer gameId) {
         Criteria criteria = Criteria.where("gid").is(gameId);
         Query query = Query.query(criteria);
+        return template.find(query, Document.class, COLLECTION_GAMES);
+    }
+
+    public List<Document> findGameByGameId(String gameId) {
+        Criteria criteria = Criteria.where("gid").is(Integer.parseInt(gameId));
+        Query query = Query.query(criteria);
+
         return template.find(query, Document.class, COLLECTION_GAMES);
     }
 

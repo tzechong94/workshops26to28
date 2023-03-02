@@ -1,5 +1,7 @@
 package com.example.revision27.models;
 
+import java.util.List;
+
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -15,18 +17,19 @@ import lombok.NoArgsConstructor;
 public class Game {
     
     private ObjectId _id;
-    private Integer gId;
+    private Integer gid;
     private String name;
     private Integer year;
     private Integer ranking;
     private Integer usersRated;
     private String url;
     private String image;
+    private List<String> reviews;
 
     public JsonObject toJsonObject() {
 
         return Json.createObjectBuilder()
-            .add("game_id", this.getGId())
+            .add("game_id", this.getGid())
             .add("name", this.getName())
             .build();
     }
@@ -38,7 +41,7 @@ public class Game {
         }
 
         game.set_id(doc.getObjectId("_id"));
-        game.setGId(doc.getInteger("gid"));
+        game.setGid(doc.getInteger("gid"));
         game.setName(doc.getString("name"));
         game.setYear(doc.getInteger("year"));
         game.setRanking(doc.getInteger("ranking"));
