@@ -49,4 +49,13 @@ public class NewReview {
         return editedElement;
     }
 
+    public JsonObject toJsonObject() {
+
+        return Json.createObjectBuilder()
+            .add("comment", this.getComment())
+            .add("rating", this.getRating())
+            .add("posted", this.getPosted().toString())
+            .build();
+    }
+
 }

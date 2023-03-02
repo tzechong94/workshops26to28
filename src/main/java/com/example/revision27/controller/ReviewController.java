@@ -24,6 +24,7 @@ import com.example.revision27.service.GameService;
 import com.example.revision27.service.ReviewService;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 
 @Controller
@@ -60,7 +61,7 @@ public class ReviewController {
         List<NewReview> newReviewList = new ArrayList<>();
         newReviewList.add(nr);
 
-        Integer gameId = review.getGameId();
+        Integer gameId = review.getGid();
 
         String gameName = gameSvc.getGameNameFromId(gameId);
         
@@ -81,7 +82,7 @@ public class ReviewController {
 
         System.out.println(review.getName() + "name");
         System.out.println(review.getUser() + "user");
-        System.out.println(review.getGameId() + "gameid");
+        System.out.println(review.getGid() + "gameid");
         System.out.println(review.getComment() + "comment");
         System.out.println(review.getPosted() + "posted");
         System.out.println(review.getRating() + "rating");
@@ -145,5 +146,39 @@ public class ReviewController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(result.toString(), HttpStatus.OK);
+    }
+
+    @GetMapping("/review/{reviewId}/history")
+    public ResponseEntity<String> getHistoryOfEdits(@PathVariable String reviewId){
+        Review returnedReview = reviewSvc.getReviewById(reviewId);
+        List<NewReview> listOfEdited = returnedReview.getEdited();
+        NewReview latestReview = listOfEdited.get(listOfEdited.size()-1);
+
+        System.out.println(listOfEdited + "history");
+
+        JsonArrayBuilder arrbld = Json.createArrayBuilder();
+        List<JsonObject> listOfNewReviews = listOfEdited
+                                        .stream()
+                                        .map(r -> r.toJsonObject())
+                                        .toList();
+
+        for (JsonObject x : listOfNewReviews) {
+            arrbld.add(x);
+        }
+
+
+        JsonObject result = Json.createObjectBuilder()
+            .add("user", returnedReview.getName())
+            .add("rating", latestReview.getRating())
+            .add("comment", latestReview.getComment())
+            .add("ID", returnedReview.getGid())
+            .add("posted", latestReview.getPosted().toString())
+            .add("name", returnedReview.getName())
+            .add("edited", arrbld)
+        // .add("edited", review.getEdited().toArray());
+            .build();
+
+        return new ResponseEntity<>(result.toString(), HttpStatus.OK);
+
     }
 }
