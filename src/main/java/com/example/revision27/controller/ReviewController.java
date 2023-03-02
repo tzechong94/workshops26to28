@@ -6,18 +6,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,12 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.revision27.models.NewReview;
 import com.example.revision27.models.Review;
-import com.example.revision27.repo.GameRepo;
 import com.example.revision27.service.GameService;
 import com.example.revision27.service.ReviewService;
 
 import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 
 @Controller
@@ -117,7 +110,6 @@ public class ReviewController {
         NewReview nr = NewReview.createFromJson(newReviewJson);
 
         Review returnedReview = reviewSvc.findReviewById(reviewId);
-
         
         if (returnedReview != null){
             // List<NewReview> currentEditedHistory = returnedReview.getEdited();
@@ -128,5 +120,30 @@ public class ReviewController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/review/{reviewId}")
+    public ResponseEntity<String> getLatestReviewById(@PathVariable String reviewId) {
+
+        Review returnedReview = reviewSvc.getReviewById(reviewId);
+        List<NewReview> listOfEdited = returnedReview.getEdited();
+
+        NewReview latestReview = listOfEdited.get(listOfEdited.size()-1);
+        System.out.println(latestReview);
+
+        JsonObject result = Json.createObjectBuilder()
+            .add("user", returnedReview.getName())
+            .add("rating", latestReview.getRating())
+            .add("comment", latestReview.getComment())
+            .add("ID", returnedReview.getGid())
+            .add("posted", latestReview.getPosted().toString())
+            .add("name", returnedReview.getName())
+        // .add("edited", review.getEdited().toArray());
+            .build();
+
+        if (result.isEmpty()) 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(result.toString(), HttpStatus.OK);
     }
 }

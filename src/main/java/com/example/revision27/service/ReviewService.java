@@ -1,6 +1,7 @@
 package com.example.revision27.service;
 
 
+
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,20 @@ public class ReviewService {
     public Review findReviewById(String reviewId) {
         Document d = reviewRepo.findReviewById(reviewId);
         Review r = new Review();
+        System.out.println(d.toString() + "document");
         return r.createFromDoc(d);
     }
 
     public void updateReviewById(String reviewId, NewReview newReview) {
         reviewRepo.updateReviewById(reviewId, newReview);
     }
+
+    public Review getReviewById(String reviewId) {
+        Review r = reviewRepo.getReviewById(reviewId);
+        // List<NewReview> listOfEdited = r.getEdited();
+        // System.out.println(listOfEdited + "list of edited");
+        return r;
+    }
+
     
 }

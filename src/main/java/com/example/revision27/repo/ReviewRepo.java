@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.example.revision27.models.NewReview;
+import com.example.revision27.models.Review;
 import com.mongodb.client.result.UpdateResult;
 
 import static com.example.revision27.Constants.*;
@@ -49,4 +50,12 @@ public class ReviewRepo {
         else 
             System.out.println(updateResult.getModifiedCount() + " document(s) updated..");
     }
+
+    public Review getReviewById(String reviewId){
+        ObjectId _id = new ObjectId(reviewId);
+        return template.findById(_id, Review.class, COLLECTION_REVIEWS);
+        // mongotemplate automatically maps the results to the review class. if the name doesn't match,
+        // you can also manually configure mapping i m
+    }
+    
 }

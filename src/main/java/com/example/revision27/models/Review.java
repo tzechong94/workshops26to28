@@ -21,7 +21,7 @@ public class Review {
     private String user;
     private Integer rating;
     private String comment;
-    private Integer gameId;
+    private Integer gid;
     private Date posted;
     private String name;
     private List<NewReview> edited;
@@ -34,7 +34,7 @@ public class Review {
         r.setUser(form.getFirst("user"));
         r.setComment(form.getFirst("comment"));
         r.setRating(Integer.parseInt(form.getFirst("rating")));
-        r.setGameId(Integer.parseInt(form.getFirst("gameId")));
+        r.setGid(Integer.parseInt(form.getFirst("gameId")));
         r.setPosted(timestamp);
         return r;
     }
@@ -44,7 +44,7 @@ public class Review {
         doc.put("user", getUser());
         doc.put("comment", getComment());
         doc.put("rating", getRating());
-        doc.put("gid", getGameId());
+        doc.put("gid", getGid());
         doc.put("name", getName());
         doc.put("posted", getPosted());
         doc.put("edited", getEdited());
@@ -57,10 +57,9 @@ public class Review {
         r.setUser(d.getString("user"));
         r.setRating(d.getInteger("rating"));
         r.setComment(d.getString("comment"));
-        r.setGameId(d.getInteger("gid"));
+        r.setGid(d.getInteger("gid"));
         r.setPosted(d.getDate("posted"));
         r.setName(d.getString("name"));
-
         return r;
     }
 
@@ -69,12 +68,16 @@ public class Review {
         doc.put("user", getUser());
         doc.put("comment", getComment());
         doc.put("rating", getRating());
-        doc.put("gid", getGameId());
+        doc.put("gid", getGid());
         doc.put("name", getName());
         doc.put("posted", getPosted());
         doc.put("edited", getEdited());
 
         return doc;
+    }
+
+    public int size() {
+        return 0;
     }
 }
 
